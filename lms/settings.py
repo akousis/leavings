@@ -129,3 +129,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'leave_management.User'  # Point to the custom User model in leave_management app
 
 LOGOUT_REDIRECT_URL = 'landing_page'  # Redirect to the landing page after logout
+
+LOGIN_REDIRECT_URL = '/' 
