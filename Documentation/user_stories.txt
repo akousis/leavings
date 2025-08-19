@@ -1,0 +1,17 @@
+As an employee, I want to submit a leave request so that I can take time off from work.
+
+As a manager, I want to review and approve or reject leave requests so that I can manage team availability.
+
+As an HR administrator, I want to view all leave records so that I can track employee absences.
+
+As an employee, I want to view the status of my leave requests so that I know if my leave is approved.
+
+As a manager, I want to see a calendar of team leaves so that I can plan project schedules.
+
+As an HR administrator, I want to generate reports on leave usage so that I can analyze leave trends.
+
+As an employee, I want to cancel a pending leave request so that I can update my plans if needed.
+
+As a manager, I want to receive notifications for new leave requests so that I can respond promptly.
+
+As an HR administrator, I want to configure leave policies so that the system reflects company rules.

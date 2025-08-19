@@ -1,0 +1,28 @@
+stateDiagram-v2
+    direction LR
+    [*] --> Submitted: Application submitted
+    
+    Submitted --> Received: HR enters protocol number
+    Submitted --> Canceled: Employee cancels application
+    
+    Received --> Awaiting_Documentation: HR finds application incomplete
+    Received --> Ready_for_Approval: HR finds application complete
+    Received --> Canceled: Employee cancels application
+    
+    Awaiting_Documentation --> Received: Employee provides documentation
+    Awaiting_Documentation --> Canceled: Employee cancels application
+    
+    Ready_for_Approval --> Approved: Director approves
+    Ready_for_Approval --> Rejected: Director rejects
+    
+    Approved --> [*]
+    Rejected --> [*]
+    Canceled --> [*]
+
+    state "Pending Submission" as Submitted
+    state "HR Receives Application" as Received
+    state "Awaiting Employee Documents" as Awaiting_Documentation
+    state "Ready for Director Approval" as Ready_for_Approval
+    state "Approved by Director" as Approved
+    state "Rejected by Director" as Rejected
+    state "Canceled by Employee" as Canceled

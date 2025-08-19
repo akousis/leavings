@@ -1,0 +1,225 @@
+📋 Final Class Diagram with 'LeavePolicy' Class
+This diagram includes the new LeavePolicy class to handle varying max_days for different employee types. The max_days attribute has been removed from the LeaveType class to avoid redundancy.
+
+User and Employee-Related Classes
+User
+
+Description: The standard Django user model for authentication.
+
+Attributes: username, password, first_name, last_name, email
+
+Employee
+
+Description: The base model for all employees, containing shared attributes.
+
+Attributes:
+
+user (One-to-One to User)
+
+organization (Many-to-One to Organization)
+
+hire_date (date)
+
+specialty (string)
+
+is_hr (boolean)
+
+is_director (boolean)
+
+PermanentTeacher
+
+Description: Represents a permanent teacher.
+
+Attributes:
+
+Inherits from Employee.
+
+tenure_start_date (date)
+
+SubstituteTeacher
+
+Description: Represents a substitute teacher.
+
+Attributes:
+
+Inherits from Employee.
+
+contract_start_date (date)
+
+contract_end_date (date)
+
+hiring_program (string, e.g., 'pde', 'espa')
+
+Manager
+
+Description: Represents a school manager or head of department.
+
+Attributes:
+
+Inherits from Employee.
+
+managed_employees (Many-to-Many to Employee)
+
+AdministrativeStaff
+
+Description: Represents an administrative employee.
+
+Attributes:
+
+Inherits from Employee.
+
+department (string, e.g., 'HR', 'IT')
+
+Organization
+
+Description: Represents a school, a department, or the central Directorate.
+
+Attributes: name, address, director_name
+
+Leave and Template Classes
+LeaveType
+
+Description: Defines the different types of leave available.
+
+Attributes: name
+
+LeaveApplication
+
+Description: Stores the details of a leave request.
+
+Attributes:
+
+employee (Many-to-One to Employee)
+
+leave_type (Many-to-One to LeaveType)
+
+start_date, end_date (date)
+
+reason (text)
+
+leave_days_count (integer)
+
+protocol_number (string, nullable)
+
+status (string, e.g., 'pending', 'approved')
+
+rejection_reason (text, nullable)
+
+LeavePolicy
+
+Description: Defines the maximum days allowed for a specific leave type and employee type combination.
+
+Attributes:
+
+leave_type (Many-to-One to LeaveType)
+
+employee_type (string, e.g., 'permanent_teacher', 'substitute_teacher', 'administrative_staff')
+
+max_days (integer)
+
+LeaveBalance
+
+Description: Tracks the cumulative days taken for each employee and leave type.
+
+Attributes:
+
+employee (Many-to-One to Employee)
+
+leave_type (Many-to-One to LeaveType)
+
+days_taken (integer)
+
+Attachment
+
+Description: Stores documents uploaded as attachments to a leave application.
+
+Attributes:
+
+leave_application (Many-to-One to LeaveApplication)
+
+file (file path)
+
+LeaveTemplate
+
+Description: Stores information about the Word templates for PDF generation.
+
+Attributes:
+
+file_path (string)
+
+type (string, e.g., 'submission', 'decision')
+
+leave_type (Many-to-One to LeaveType)
+
+employee_type (string, e.g., 'permanent_teacher', 'substitute_teacher', 'manager', 'administrative_staff')
+
+Relationship Diagram
+classDiagram
+    class User {
+        +username: str
+        +password: str
+        +first_name: str
+    }
+    class Employee {
+        +hire_date: date
+        +specialty: str
+        +is_hr: bool
+        +is_director: bool
+    }
+    class PermanentTeacher {
+        +tenure_start_date: date
+    }
+    class SubstituteTeacher {
+        +contract_start_date: date
+        +contract_end_date: date
+        +hiring_program: str
+    }
+    class Manager {
+        +managed_employees
+    }
+    class AdministrativeStaff {
+        +department: str
+    }
+    class Organization {
+        +name: str
+        +address: str
+    }
+    class LeaveType {
+    +name: str
+    }
+    class LeaveApplication {
+        +start_date: date
+        +end_date: date
+        +leave_days_count: int
+        +protocol_number: str
+        +status: str
+    }
+    class LeavePolicy {
+        +employee_type: str
+        +max_days: int
+    }
+    class LeaveBalance {
+        +days_taken: int
+    }
+    class Attachment {
+        +file
+    }
+    class LeaveTemplate {
+        +file_path: str
+        +type: str
+    }
+
+    User "1" -- "1" Employee: has >
+    Employee <|-- PermanentTeacher
+    Employee <|-- SubstituteTeacher
+    Employee <|-- Manager
+    Employee <|-- AdministrativeStaff
+    Employee "1..*" -- "1" Organization: works at >
+    LeaveApplication "1..*" -- "1" Employee: submitted by >
+    LeaveApplication "1..*" -- "1" LeaveType: is for >
+    LeaveApplication "1..*" -- "1" LeaveBalance: updates >
+    LeaveApplication "1" -- "1..*" Attachment: has >
+    LeavePolicy "1..*" -- "1" LeaveType: is for >
+    LeaveBalance "1..*" -- "1" Employee: for >
+    LeaveBalance "1..*" -- "1" LeaveType: for >
+    LeaveTemplate "1..*" -- "1" LeaveType: for >

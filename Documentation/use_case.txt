@@ -1,0 +1,60 @@
+graph TD
+    subgraph Actors
+        Employee
+        Manager
+        HR_User
+        Director
+    end
+
+    subgraph Use Cases
+        UC1[Submit a Leave Application]
+        UC2[View Leave History]
+        UC3[View Leave Balance]
+        UC4[Approve or Reject Leave]
+        UC6[View Employee Applications]
+        UC7[View All Employee Data]
+        UC10[Generate PDF Documents]
+        UC12[View All Applications]
+        UC13[Enter Protocol Number]
+        UC14[Check Application for Completeness]
+        UC15[Approve/Reject and Sign]
+        UC16[Upload Attachments]
+        UC17[View and Check Attachments]
+        UC18[Cancel a Leave Application]
+        UC19[Notify Employee of Incompleteness]
+        UC20[View Submitted Application]
+        UC21[Download Application PDF]
+        UC22[Download Decision PDF]
+    end
+
+    Employee --> UC1
+    Employee --> UC2
+    Employee --> UC3
+    Employee --> UC20
+    Manager --> UC4
+    Manager --> UC6
+    Manager --> UC7
+    HR_User --> UC13
+    HR_User --> UC14
+    HR_User --> UC17
+    HR_User --> UC7
+    HR_User --> UC10
+    HR_User --> UC12
+    HR_User --> UC19
+    Director --> UC15
+    Director --> UC7
+    Director --> UC10
+    Director --> UC12
+
+    UC1 ..> UC16: <<include>>
+    UC14 ..> UC17: <<include>>
+    UC14 ..> UC19: <<extend>>
+    UC2 --> UC20: <<extend>>
+    UC2 ..> UC21: <<include>>
+    UC2 ..> UC22: <<include>>
+    UC20 ..> UC18: <<extend>>
+
+    Employee -- inherits --> User
+    Manager -- inherits --> Employee
+    HR_User -- inherits --> Employee
+    Director -- inherits --> Employee

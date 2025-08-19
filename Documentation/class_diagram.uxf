@@ -1,0 +1,124 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>250</x><y>0</y><w>150</w><h>190</h></coordinates><panel_attributes>User
+--
+-user_id: Long
+-username: String
+-password: String
+-first_name: String
+-last_name: String
+-email: String
+--
+#Operation(i: int): int
+/+AbstractOperation()/
+--
+Responsibilities
+-- The standard Django user model for authentication
+*-- Resp2*</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>320</x><y>180</y><w>30</w><h>60</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>UMLClass</id><coordinates><x>160</x><y>450</y><w>160</w><h>100</h></coordinates><panel_attributes>PermanentTeacher
+--
+-tenure_start_date: date
+--
+#Operation(i: int): int
+/+AbstractOperation()/
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>240</x><y>220</y><w>170</w><h>140</h></coordinates><panel_attributes>Employee
+--
+-specialty: string
+-is_hr: boolean
+-is_director:boolean
+--
+#Operation(i: int): int
+/+AbstractOperation()/
+--
+Description: The base model for all employees</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>350</y><w>100</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>80;10;80;50;10;50;10;100</additional_attributes></element><element><id>UMLClass</id><coordinates><x>370</x><y>450</y><w>150</w><h>100</h></coordinates><panel_attributes>SubstituteTeacher
+--
+- contract_start_date: date
+- contract_end_date: date
+- hiring_program: String (pde, espa)
+--
+#Operation(i: int): int
+/+AbstractOperation()/</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>350</x><y>350</y><w>110</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;50;90;50;90;100</additional_attributes></element><element><id>UMLClass</id><coordinates><x>160</x><y>600</y><w>170</w><h>90</h></coordinates><panel_attributes>Manager
+--
+- managed_employees: Employee
+--
+#Operation(i: int): int
+/+AbstractOperation()/
+--
+Responsibilities
+-- Resp1
+*-- Resp2*</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>360</x><y>600</y><w>160</w><h>90</h></coordinates><panel_attributes>AdministrativeStuff
+--
+- department: String
+--
+#Operation(i: int): int
+/+AbstractOperation()/</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>340</x><y>350</y><w>120</w><h>270</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;210;100;210;100;250</additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>350</y><w>110</w><h>270</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>90;10;90;210;10;210;10;250</additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>220</y><w>160</w><h>120</h></coordinates><panel_attributes>Organization
+--
+- organization_name: string
+- address: String
+- email: String
+- telephone_number: String
+--
+#Operation(i: int): int
+/+AbstractOperation()/
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>150</x><y>270</y><w>110</w><h>50</h></coordinates><panel_attributes>lt=-
+m1=0..n
+m2=1
+&lt; works_at</panel_attributes><additional_attributes>10;20;90;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>570</x><y>220</y><w>180</w><h>170</h></coordinates><panel_attributes>LeaveApplication
+--
+- reason: String
+- start_date: date
+- end_date: date
+- leave_days_count: int
+- status: string
+- protocol_number: string
+- rejection_reason: text
+--
+-working_days_calculation(start_date, end_date): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>900</x><y>210</y><w>170</w><h>90</h></coordinates><panel_attributes>LeaveType
+--
+- name: String
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>400</x><y>270</y><w>190</w><h>50</h></coordinates><panel_attributes>lt=-
+m1=0..n
+m2=1
+&lt; submited_by </panel_attributes><additional_attributes>10;20;170;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>520</x><y>0</y><w>280</w><h>130</h></coordinates><panel_attributes>LeaveBalance
+--
+- employee: Employee
+- leave_type: LeaveType
+- days_taken: integer
+--
+methods
+--
+Description: Tracks the cumulative days taken for each employee and leave type.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>900</x><y>0</y><w>160</w><h>90</h></coordinates><panel_attributes>LeavePolicy
+--
+- leave_type: LeaveType
+- employee_type: String
+- max_days: int
+--
+
+--
+Description: Defines the maximum days allowed for a specific leave type and employee type combination.</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>970</x><y>80</y><w>100</w><h>150</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..1
+relates_to &gt;</panel_attributes><additional_attributes>10;130;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>620</x><y>560</y><w>160</w><h>60</h></coordinates><panel_attributes>Attachment
+--
+- leave_application: LeaveApplication
+- filepath</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>650</x><y>380</y><w>100</w><h>200</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..*
+has &gt;</panel_attributes><additional_attributes>10;10;10;70;50;70;50;180</additional_attributes></element><element><id>UMLClass</id><coordinates><x>890</x><y>460</y><w>190</w><h>130</h></coordinates><panel_attributes>LeaveTemplate
+--
+- file_path: String
+- type: String (submission, decision)
+- leave_type: LeaveType
+- employee_type: String
+--
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>980</x><y>290</y><w>70</w><h>190</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1...n
+uses &gt;</panel_attributes><additional_attributes>10;10;10;170</additional_attributes></element><element><id>Relation</id><coordinates><x>740</x><y>240</y><w>180</w><h>80</h></coordinates><panel_attributes>lt=-
+m1=0..*
+m2=1
+is_for &gt;</panel_attributes><additional_attributes>10;50;70;50;70;10;160;10</additional_attributes></element><element><id>Relation</id><coordinates><x>650</x><y>120</y><w>90</w><h>120</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1..*
+&lt; updates</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>Relation</id><coordinates><x>730</x><y>120</y><w>220</w><h>110</h></coordinates><panel_attributes>lt=-
+m1=1..n
+m2=1
+for &gt;</panel_attributes><additional_attributes>10;10;10;50;190;50;190;90</additional_attributes></element></diagram>

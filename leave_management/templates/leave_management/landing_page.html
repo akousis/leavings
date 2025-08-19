@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Leave Management</title>
+   
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md text-center transform transition-all duration-300">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">Welcome to the Leave Management System!</h1>
+        <p class="text-gray-600 mb-6">Your personal platform for managing leave applications.</p>
+        
+       
+        {% if user.is_authenticated %}
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-green-200">
+                <p class="text-green-800 font-semibold mb-2">Hello, {{ user.first_name|default:user.username }}!</p>
+                <p class="text-gray-600 mb-4">You are currently logged in.</p>
+                <form action="{% url 'logout' %}" method="post" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 shadow-md">
+                        Αποσύνδεση
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p class="text-blue-800 font-semibold mb-4">Please log in to continue.</p>
+                <a href="{% url 'login' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 shadow-md mr-2">
+                    Log In
+                </a>
+                <a href="#" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-full transition-all duration-300 shadow-md">
+                    Sign Up
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</body>
+</html>

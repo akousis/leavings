@@ -1,0 +1,327 @@
+Part 1: Install the Core Tools
+Before we write any code, we need to set up the necessary software on your computer.
+
+Install Git: This is a crucial tool for version control and will be used to manage your project's code.
+
+Go to the official Git website: Git for Windows.
+
+Download and run the installer. You can accept the default options during the installation process.
+
+Install VS Code: This is your code editor, which we'll use for all development.
+
+Go to the official VS Code website: Visual Studio Code.
+
+Download and run the installer. During installation, make sure to check the box that says "Add 'Open with Code' action to Windows Explorer file context menu."
+
+Install Docker Desktop: This will be the platform for running your containers.
+
+Go to the official Docker website: Docker Desktop for Windows.
+
+Download and run the installer.
+
+The installer will automatically enable WSL 2 if it's not already on your system. You might need to restart your computer to complete the installation.
+
+After installation, open your Command Prompt or PowerShell and run docker --version and wsl --status to confirm everything is working. You should see a version number for Docker and a status for WSL.
+
+
+
+Part 2: Install VS Code Extensions
+Open VS Code.
+
+Navigate to the Extensions View: On the left-hand side of the VS Code window, click the Extensions icon (it looks like four squares). Alternatively, you can press Ctrl+Shift+X.
+
+Install the "Python" extension: In the search bar at the top, type Python. Find the extension published by Microsoft and click the Install button. This extension provides powerful language support, including IntelliSense and debugging.
+
+Install the "Docker" extension: In the search bar, type Docker. Find the extension published by Microsoft and click Install. This adds a dedicated panel for managing your containers and images directly from VS Code.
+
+Install the "Dev Containers" extension: In the search bar, type Dev Containers. Find the extension published by Microsoft and click Install. This is the key extension that will allow you to work inside a Docker container as your development environment.
+
+After you've installed these three extensions, you'll have everything you need inside VS Code to start developing with containers.
+
+Part 3: Create Your Project and Set Up Git
+Now that your tools are ready, let's create the project and set up version control.
+
+Create a Project Folder: On your Windows machine, create a new, empty folder where you'll store your project code. For example, you can create a folder named django-lms (for Django Leave Management System).
+
+Open the Folder in VS Code: Open VS Code, go to the File menu, and select Open Folder. Navigate to and select the django-lms folder you just created.
+
+Initialize a Git Repository:
+
+In VS Code, go to the Terminal menu and select New Terminal. This will open a command-line terminal at the bottom of the window, with your project folder as the current directory.
+
+In the terminal, run the following command to initialize a new Git repository:
+
+Bash
+
+git init
+You should see a message confirming that an empty Git repository was initialized.
+
+Create a .gitignore File:
+
+In the VS Code Explorer panel (on the left), click the "New File" icon and name the new file .gitignore.
+
+This file tells Git which files to ignore, so you don't commit temporary files or dependencies that shouldn't be in your repository.
+
+Copy and paste the following content into the .gitignore file:
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environment
+venv/
+env/
+
+# Docker
+.env
+
+
+Part 4: Create the Docker Files
+Now we'll create the files that tell Docker how to build and run your Django application.
+
+Create requirements.txt:
+
+In the VS Code Explorer panel, click the "New File" icon and name the new file requirements.txt.
+
+This file will list all the Python libraries your project needs.
+
+Copy and paste the following content into the file. This includes Django and the PostgreSQL database driver.
+
+Django
+psycopg2-binary
+Save the file.
+
+Create Dockerfile:
+
+In the VS Code Explorer panel, click the "New File" icon and name the new file Dockerfile (with no file extension).
+
+This file contains the instructions for building your Django app's Docker image.
+
+Copy and paste the following content into the file. I've added comments to explain each step.
+
+Dockerfile
+
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file into the container
+COPY requirements.txt .
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code into the container
+COPY . .
+
+# Expose port 8000 to the outside world
+EXPOSE 8000
+
+# Run the Django development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+Save the file.
+
+You now have the two key files needed to build your Django app's container. Let me know when you're ready for the next step, where we'll set up docker-compose to run this container alongside your PostgreSQL database.
+
+Part 5: Create the docker-compose File
+This is the file that orchestrates your multi-container application. It tells Docker how to run your Django app container and your PostgreSQL database container together.
+
+Create docker-compose.yml:
+
+In the VS Code Explorer panel, create a new file and name it docker-compose.yml. Make sure it's in the root of your project folder.
+
+Add the Configuration:
+
+Copy and paste the following code into the file. It defines your two services and their configuration.
+
+YAML
+
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_DB=lmsdb
+      - POSTGRES_USER=lmsuser
+      - POSTGRES_PASSWORD=lmspassword
+    depends_on:
+      - db
+  
+  db:
+    image: postgres:14-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=lmsdb
+      - POSTGRES_USER=lmsuser
+      - POSTGRES_PASSWORD=lmspassword
+
+volumes:
+  postgres_data:
+Save the file.
+
+A brief explanation:
+
+The web service is your Django app. The build: . line tells Docker to use your Dockerfile in the current directory to create its image.
+
+The db service is your PostgreSQL database. The image: postgres:14-alpine line tells Docker to use a pre-built image from Docker Hub.
+
+The volumes section ensures your database data persists even if the container is removed.
+
+The environment variables set the database name, user, and password, which we'll use in your Django settings.
+
+The depends_on: - db line ensures the db container starts before the web container.
+
+
+Part 6: Configure Django's Settings
+This is the most critical step for connecting your Django app to the PostgreSQL database. We'll update the project's settings to tell Django to use the db container we defined.
+
+Create the Django Project:
+
+In your VS Code terminal, run the following command. This command uses Docker to create a new Django project named lms inside your current directory.
+
+Bash
+
+docker compose run --rm web django-admin startproject lms .
+The web service will run the django-admin command for you, and the --rm flag ensures the container is removed after the command is complete.
+
+You should now see a new lms folder, a manage.py file, and other Django project files in your django-lms directory.
+
+Open settings.py:
+
+In your VS Code Explorer, navigate to the lms/lms/settings.py file and open it.
+
+Update the DATABASES Setting:
+
+Find the DATABASES dictionary and replace the entire section with the following code. Make sure to use the exact same values for NAME, USER, and PASSWORD that you defined in your docker-compose.yml file.
+
+Python
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'lmsdb',
+        'USER': 'lmsuser',
+        'PASSWORD': 'lmspassword',
+        'HOST': 'db',  # This name must match the service name in docker-compose.yml
+        'PORT': '5432',
+    }
+}
+Update ALLOWED_HOSTS:
+
+Find the ALLOWED_HOSTS variable and change it to the following. This allows your Django app to be accessed from within the Docker network.
+
+Python
+
+ALLOWED_HOSTS = ['*']
+Save the file.
+
+That's the core configuration for Django. 
+
+Everything is set up. Let's test it out! This is the most exciting part where we see everything come together.
+
+Part 7: Build and Run Your Application
+Build the Docker Images:
+
+In your VS Code terminal, run the following command. This will read your Dockerfile and docker-compose.yml to build the Docker image for your Django app and download the PostgreSQL image.
+
+Bash
+
+docker compose build
+This command will take a few minutes to run the first time as it downloads all the necessary components.
+
+Run Database Migrations:
+
+After the build is complete, run the following command. This will apply Django's built-in migrations to your new PostgreSQL database, creating all the necessary tables.
+
+Bash
+
+docker compose run web python manage.py migrate
+If this command runs successfully without errors, it means your Django app is successfully connected to your PostgreSQL database!
+
+Create a Superuser:
+
+To access the Django admin panel, you need a superuser account. Run this command and follow the prompts to create a username, email, and password.
+
+Bash
+
+docker compose run web python manage.py createsuperuser
+Run the Application:
+
+Now, let's start both the Django and PostgreSQL containers in the background.
+
+Bash
+
+docker compose up
+You should see log messages from both the web and db services. Your Django development server is now running inside its container.
+
+Verification
+Open your web browser and navigate to http://localhost:8000. You should see the Django welcome page, confirming your server is running.
+
+Next, navigate to http://localhost:8000/admin. You should see the Django administration login screen. Use the superuser credentials you created to log in. If you can log in, you have a fully functional Django, PostgreSQL, and Docker environment!
+
+Congratulations! You have successfully set up your entire development stack from scratch. 🎉
+
+The next step is to create a Django app. A Django project is a collection of apps, and each app handles a specific feature (e.g., your leave management app, a user authentication app). This keeps your code organized and reusable.
+
+Part 8: Create Your First Django App
+Stop the Running Containers: If your containers are still running from the previous step, open your VS Code terminal and press Ctrl+C to stop them.
+
+Run the startapp Command:
+
+In your terminal, run the following command. This will create a new Django app named leave_management inside your project.
+
+Bash
+
+docker compose run web python manage.py startapp leave_management
+Check Your Project Folder:
+
+You should now see a new leave_management folder in your project's root directory, with its own models.py, views.py, and other files.
+
+Register the App:
+
+Open your project's settings.py file (lms/lms/settings.py) and find the INSTALLED_APPS list.
+
+Add your new app's name to the list, like this:
+
+Python
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'leave_management', # <-- Add this line
+]
+Save the file.
+
+That's all for now. You have created and registered your first Django app. 

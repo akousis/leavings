@@ -1,0 +1,30 @@
+services:
+  web:
+    build: .  # Build from the Dockerfile in the current directory
+    command: python manage.py runserver 0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000" 
+    environment:
+      - DEBUG=True
+      - POSTGRES_DB=lmsdb
+      - POSTGRES_USER=lmsuser
+      - POSTGRES_PASSWORD=lmsuserpassword
+    depends_on:   # Ensures the database service starts before the web service
+      - db
+
+  db:
+    image: postgres:14-alpine  # Use the official PostgreSQL image
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  
+    environment:
+      - POSTGRES_DB=lmsdb
+      - POSTGRES_USER=lmsuser
+      - POSTGRES_PASSWORD=lmsuserpassword
+    ports:
+      - "5432:5432"  # Expose PostgreSQL on the default port
+
+volumes:  # Ensures data persists across container restarts
+  postgres_data:
+  

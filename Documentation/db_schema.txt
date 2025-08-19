@@ -1,0 +1,167 @@
+📄 Draft Database Schema
+This schema outlines the tables and fields for your Django application's database, derived directly from our collaborative design work.
+
+1. Authentication and Profiles
+User
+
+Description: Django's built-in user model.
+
+Fields:
+
+username (string, unique, primary key)
+
+password (string)
+
+first_name (string)
+
+last_name (string)
+
+email (string, unique)
+
+is_active (boolean, default: True)
+
+is_staff (boolean, default: False)
+
+is_superuser (boolean, default: False)
+
+EmployeeProfile
+
+Description: Stores all employee-specific information, linked to a user.
+
+Fields:
+
+id (integer, primary key)
+
+user (One-to-One to User)
+
+organization (Foreign Key to Organization)
+
+hire_date (date)
+
+specialty (string)
+
+is_hr (boolean, default: False)
+
+is_director (boolean, default: False)
+
+Organization
+
+Description: Represents a school or department.
+
+Fields:
+
+id (integer, primary key)
+
+name (string, unique)
+
+address (text)
+
+director_name (string)
+
+2. Employee-Specific Models (Multi-Table Inheritance)
+These models extend the EmployeeProfile to add role-specific attributes.
+
+PermanentTeacher
+
+Description: Model for a permanent teacher.
+
+Fields:
+
+id (integer, primary key)
+
+profile (One-to-One to EmployeeProfile)
+
+tenure_start_date (date)
+
+SubstituteTeacher
+
+Description: Model for a substitute teacher.
+
+Fields:
+
+id (integer, primary key)
+
+profile (One-to-One to EmployeeProfile)
+
+contract_start_date (date)
+
+contract_end_date (date)
+
+Manager
+
+Description: Model for a manager.
+
+Fields:
+
+id (integer, primary key)
+
+profile (One-to-One to EmployeeProfile)
+
+managed_employees (Many-to-Many with EmployeeProfile)
+
+AdministrativeStaff
+
+Description: Model for administrative employees.
+
+Fields:
+
+id (integer, primary key)
+
+profile (One-to-One to EmployeeProfile)
+
+department (string)
+
+3. Leave Management
+LeaveType
+
+Description: Defines the different types of leave.
+
+Fields:
+
+id (integer, primary key)
+
+name (string, unique)
+
+max_days (integer)
+
+LeaveApplication
+
+Description: Stores a single leave request and its current state.
+
+Fields:
+
+id (integer, primary key)
+
+employee (Foreign Key to EmployeeProfile)
+
+leave_type (Foreign Key to LeaveType)
+
+start_date (date)
+
+end_date (date)
+
+leave_days_count (integer)
+
+reason (text)
+
+status (string, choices: 'Submitted', 'Received', 'Awaiting_Documentation', 'Ready_for_Approval', 'Approved', 'Rejected', 'Canceled')
+
+rejection_reason (text, nullable)
+
+protocol_number (string, unique, nullable)
+
+LeaveTemplate
+
+Description: Stores information about the PDF generation templates.
+
+Fields:
+
+id (integer, primary key)
+
+file_path (string)
+
+type (string, choices: 'submission', 'decision')
+
+leave_type (Foreign Key to LeaveType)
+
+employee_type (string, choices: 'permanent_teacher', 'substitute_teacher', 'manager', 'administrative_staff')
