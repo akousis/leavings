@@ -1,0 +1,135 @@
+'use strict';
+
+// Import React's core hooks: useState and useEffect
+const { useState, useEffect } = React;
+
+// The main App component
+function App() {
+    // State to hold the leave requests fetched from the API
+    const [leaveRequests, setLeaveRequests] = useState([]);
+    // State to manage the loading status
+    const [isLoading, setIsLoading] = useState(true);
+    // State to hold any error messages
+    const [error, setError] = useState(null);
+
+    // useEffect hook to fetch data when the component mounts
+    useEffect(() => {
+        // Asynchronous function to handle the data fetching
+        const fetchLeaveRequests = async () => {
+            try {
+                // Replace this placeholder URL with your actual Django API endpoint URL
+                const response = await fetch('/api/leave-requests/');
+                
+                // Check if the response was successful
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Fetched data:', data); // Log the fetched data for debugging
+                setLeaveRequests(data); // Update the state with the new data
+            } catch (err) {
+                // Set the error state if something goes wrong
+                setError('Failed to fetch leave requests. Please try again later.');
+                console.error('Error fetching data:', err);
+            } finally {
+                // Set loading to false once the fetch is complete (whether it succeeds or fails)
+                setIsLoading(false);
+            }
+        };
+
+        fetchLeaveRequests();
+    }, []); // The empty dependency array ensures this effect runs only once when the component mounts
+
+    // Placeholder function for the "Add Leave" button click
+    const handleAddLeave = () => {
+        alert('Add Leave button clicked! (Functionality to be implemented)');
+    };
+
+    // Render different content based on the state (loading, error, or success)
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+            <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-4xl">
+                
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-3xl font-bold text-gray-800">Leave History</h1>
+                    <button
+                        onClick={handleAddLeave}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                        Add Leave
+                    </button>
+                </div>
+                
+                {/* Conditional rendering based on the application state */}
+                {isLoading ? (
+                    <p className="text-center text-lg text-gray-600">Loading leave history...</p>
+                ) : error ? (
+                    <p className="text-center text-lg text-red-500">{error}</p>
+                ) : leaveRequests.length > 0 ? (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Employee
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Leave Type
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Start Date
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        End Date
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {leaveRequests.map(request => (
+                                    <tr key={request.id}>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            {request.employeeName}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {request.leaveType}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {request.startDate}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {request.endDate}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                                request.status === 'Approved' ? 'bg-green-100 text-green-800' :
+                                                request.status === 'Denied' ? 'bg-red-100 text-red-800' :
+                                                'bg-yellow-100 text-yellow-800'
+                                            }`}>
+                                                {request.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p className="text-center text-lg text-gray-600">No leave requests found.</p>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// Get the DOM element to render the React app into
+const domContainer = document.querySelector('#root');
+
+// Use ReactDOM.createRoot for React 18
+if (domContainer) {
+    const root = ReactDOM.createRoot(domContainer);
+    root.render(React.createElement(App));
+}

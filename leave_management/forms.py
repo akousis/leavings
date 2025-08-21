@@ -1,5 +1,5 @@
 from django import forms
-from .models import LeaveApplication
+from .models import LeaveApplication, LeaveType
 
 class LeaveApplicationForm(forms.ModelForm):
     """
@@ -7,9 +7,10 @@ class LeaveApplicationForm(forms.ModelForm):
     """
     class Meta:
         model = LeaveApplication
-        fields = ['start_date', 'end_date', 'reason']
+        fields = ['leave_type', 'start_date', 'end_date', 'reason']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date'}),
             'end_date': forms.DateInput(attrs={'type': 'date'}),
-            'reason': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Enter the reason for your leave here...'}),
+            'reason': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Συμπληρώστε τον λόγο της άδειας'}),
         }
+

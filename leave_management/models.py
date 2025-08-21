@@ -68,7 +68,7 @@ class LeaveType(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Τύπος Άδειας")
     max_days = models.IntegerField(verbose_name="Μέγιστες Ημέρες Άδειας")
     max_months = models.IntegerField(verbose_name="Μέγιστοι Μήνες Άδειας", default=0, help_text="Συμπληρώστε μόνο για μακροπρόθεσμες άδειες (μήνες).")
-    is_long_term = models.BooleanField(default=False, verbose_name="Μακροπρόθεσμη Άδεια")
+    is_long_term = models.BooleanField(default=False, verbose_name="Μακροχρόνια Άδεια")
 
     def __str__(self):
         return self.name
@@ -90,7 +90,7 @@ class LeaveApplication(models.Model):
     )
 
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name="Υπάλληλος")
-    leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE, verbose_name="Τύπος Άδειας")
+    leave_type = models.ForeignKey(LeaveType, on_delete=models.PROTECT, verbose_name="Τύπος Άδειας")
     start_date = models.DateField(verbose_name="Ημερομηνία Έναρξης")
     end_date = models.DateField(verbose_name="Ημερομηνία Λήξης")
     leave_days_count = models.IntegerField(verbose_name="Αριθμός Ημερών Άδειας")

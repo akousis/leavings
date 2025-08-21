@@ -7,5 +7,6 @@ from . import views
 urlpatterns = [
     path('', views.landing_page, name='landing_page'),
     path('apply/', views.apply_for_leave, name='apply_for_leave'),
+    path('history/', views.leave_history_view, name='leave_history'),
     
 ]
