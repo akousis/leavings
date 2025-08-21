@@ -46,6 +46,24 @@ function App() {
         alert('Add Leave button clicked! (Functionality to be implemented)');
     };
 
+    // --- NEW FUNCTIONS FOR BUTTON ACTIONS ---
+    // Placeholder function to handle approving a leave request
+    const handleApprove = (id) => {
+        // In a real application, this would make an API call to your Django backend
+        // to update the status of the leave request with the given 'id'.
+        console.log(`Approving leave request with ID: ${id}`);
+        alert(`Approving leave request with ID: ${id}`);
+    };
+    
+    // Placeholder function to handle denying a leave request
+    const handleDeny = (id) => {
+        // In a real application, this would make an API call to your Django backend
+        // to update the status of the leave request with the given 'id'.
+        console.log(`Denying leave request with ID: ${id}`);
+        alert(`Denying leave request with ID: ${id}`);
+    };
+    // ----------------------------------------
+
     // Render different content based on the state (loading, error, or success)
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -86,6 +104,9 @@ function App() {
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Status
                                     </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
@@ -112,6 +133,28 @@ function App() {
                                                 {request.status}
                                             </span>
                                         </td>
+                                        {/* --- NEW CONDITIONAL RENDERING FOR ACTION BUTTONS --- */}
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            {request.status === 'Pending' ? (
+                                                <div className="flex space-x-2">
+                                                    <button 
+                                                        onClick={() => handleApprove(request.id)}
+                                                        className="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-md transition duration-300"
+                                                    >
+                                                        Approve
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeny(request.id)}
+                                                        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-md transition duration-300"
+                                                    >
+                                                        Deny
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <span className="text-gray-500">N/A</span>
+                                            )}
+                                        </td>
+                                        {/* ---------------------------------------------------- */}
                                     </tr>
                                 ))}
                             </tbody>

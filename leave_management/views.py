@@ -1,53 +1,57 @@
-# leave_management/views.py
-
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import LeaveApplicationForm
-from .models import LeaveApplication, Employee # Σημαντικό: εισάγετε το Employee
+from django.http import HttpResponse
 
-# Renders the main landing page, now with leave history.
-@login_required
+# You'll need to import your LeaveApplication model here once it's created.
+# from .models import LeaveApplication
+
+# This view renders the main landing page of the application.
 def landing_page(request):
     """
-    Ανακτά τις αιτήσεις άδειας του υπαλλήλου για εμφάνιση.
+    Renders the landing page of the leave management application.
     """
-    try:
-        # Αναζητούμε το αντικείμενο Employee που αντιστοιχεί στον τρέχοντα χρήστη.
-        employee = request.user.employee
-        leave_applications = LeaveApplication.objects.filter(employee=employee)
-    except Employee.DoesNotExist:
-        leave_applications = [] # Επιστρέφουμε κενή λίστα αν δεν υπάρχει αντιστοίχιση
-    
-    context = {
-        'leave_applications': leave_applications,
-    }
-    
-    return render(request, 'leave_management/landing_page.html', context)
+    return render(request, 'landing_page.html')
 
-@login_required
+# This view renders the form for a new leave application.
 def apply_for_leave(request):
     """
-    Εμφανίζει τη φόρμα αίτησης άδειας και χειρίζεται την υποβολή της.
+    Renders the form page for a new leave application.
+    """
+    return render(request, 'apply_for_leave.html')
+
+# This view will handle the submission of the leave application form.
+def add_leave_application(request):
+    """
+    Handles the submission of a new leave application.
     """
     if request.method == 'POST':
-        form = LeaveApplicationForm(request.POST)
-        if form.is_valid():
-            # Αποθηκεύουμε τη φόρμα χωρίς να κάνουμε ακόμα commit
-            leave_application = form.save(commit=False)
-            # Ορίζουμε τον υπάλληλο με βάση τον τρέχοντα συνδεδεμένο χρήστη
-            leave_application.employee = request.user.employee
-            # Τώρα αποθηκεύουμε την αίτηση στη βάση δεδομένων
-            leave_application.save()
-            return redirect('landing_page')
-    else:
-        # Για GET request, δημιουργούμε μια κενή φόρμα
-        form = LeaveApplicationForm()
+        # You will process the form data here once the model is defined.
+        # For now, we'll just redirect to the history page.
+        # Example of processing data:
+        # employee_name = request.POST.get('employee_name')
+        # start_date = request.POST.get('start_date')
+        # end_date = request.POST.get('end_date')
+        # LeaveApplication.objects.create(employee=employee_name, ...)
         
-    return render(request, 'leave_management/apply_for_leave.html', {'form': form})
+        # After processing, redirect to the leave history view.
+        return redirect('leave_history_view')
+    
+    # If the request method is not POST, redirect to the apply form.
+    return redirect('apply_for_leave')
 
-@login_required
+# This view displays a list of all submitted leave applications.
 def leave_history_view(request):
     """
-    Renders the leave history for the logged-in employee.
+    Renders the page showing the history of all leave applications.
     """
-    return render(request, 'leave_management/leave_history.html')
+    # This is a placeholder list. Once you have a model, you will fetch data from it.
+    # For now, we'll use a sample list to test the template.
+    sample_leave_applications = [
+        {'employee': 'Jane Doe', 'leave_type': 'Vacation', 'start_date': '2025-07-20', 'end_date': '2025-07-25', 'status': 'Pending'},
+        {'employee': 'John Smith', 'leave_type': 'Sick Leave', 'start_date': '2025-07-15', 'end_date': '2025-07-16', 'status': 'Approved'},
+    ]
+
+    context = {
+        'leave_applications': sample_leave_applications
+    }
+    
+    return render(request, 'leave_history.html', context)
